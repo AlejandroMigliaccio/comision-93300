@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra confirmada — Borderline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo-img { height: 56px; width: 56px; object-fit: contain; }
+
+        .header-brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .header-brand-name {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #111;
+        }
+
+        .header-brand-sub {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .main-content {
+            max-width: 680px;
+            margin: 60px auto;
+            padding: 0 16px 60px;
+        }
+
+        .success-box {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 48px 40px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-family: 'Cinzel', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .success-subtitle {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .orden-codigo {
+            display: inline-block;
+            background: #f4f4f4;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 36px;
+            letter-spacing: 1px;
+        }
+
+        /* ── Tabla de items ── */
+        .orden-items {
+            text-align: left;
+            border-top: 1px solid #eee;
+            margin-bottom: 24px;
+        }
+
+        .orden-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 15px;
+        }
+
+        .orden-item-nombre { color: #333; }
+
+        .orden-item-qty {
+            color: #888;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .orden-item-precio {
+            font-weight: bold;
+            color: #16a34a;
+        }
+
+        .orden-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .orden-total-label { color: #888; font-weight: normal; font-size: 16px; }
+
+        .orden-total-valor { color: #16a34a; }
+
+        .btn-volver {
+            display: inline-block;
+            margin-top: 32px;
+            background: #111;
+            color: #fff;
+            padding: 14px 36px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+
+        .btn-volver:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="{% static 'productos/img/logo.png' %}" alt="Borderline logo" class="header-logo-img">
+        <a href="{% url 'home' %}" class="header-brand">
+            <span class="header-brand-name">Borderline</span>
+            <span class="header-brand-sub">3D Store</span>
+        </a>
+    </header>
+
+    <div class="main-content">
+        <div class="success-box">
+            <div class="success-icon">✅</div>
+            <h1 class="success-title">¡Compra confirmada!</h1>
+            <p class="success-subtitle">Tu pedido fue registrado correctamente.</p>
+            <div class="orden-codigo">Orden # {{ orden.codigo }}</div>
+
+            <div class="orden-items">
+                {% for item in orden.items.all %}
+                <div class="orden-item-row">
+                    <span>
+                        <span class="orden-item-nombre">{{ item.producto.titulo }}</span>
+                        <span class="orden-item-qty">× {{ item.cantidad }}</span>
+                    </span>
+                    <span class="orden-item-precio">${{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+
+                <div class="orden-total-row">
+                    <span class="orden-total-label">Total pagado</span>
+                    <span class="orden-total-valor">${{ orden.total }}</span>
+                </div>
+            </div>
+
+            <a href="{% url 'home' %}" class="btn-volver">← Volver a la tienda</a>
+        </div>
+    </div>
+
+</body>
+</html>

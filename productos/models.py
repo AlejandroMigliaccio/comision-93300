@@ -25,3 +25,22 @@ class Productos(models.Model):
 
     def __str__(self):
         return f"titulo:{self.titulo} - Descripcion:{self.descripcion} - Precio:{self.precio} - Categoria:{self.categoria}"
+
+
+class Orden(models.Model):
+    codigo = models.CharField(max_length=32, unique=True, default=generar_code)
+    fecha = models.DateTimeField(auto_now_add=True)
+    total = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return f"Orden {self.codigo} — ${self.total}"
+
+
+class OrdenItem(models.Model):
+    orden = models.ForeignKey(Orden, on_delete=models.CASCADE, related_name='items')
+    producto = models.ForeignKey(Productos, on_delete=models.PROTECT)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.FloatField()
+
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario

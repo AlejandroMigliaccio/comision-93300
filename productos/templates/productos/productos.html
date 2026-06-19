@@ -193,6 +193,38 @@
         .btn-carrito:hover {
             background-color: #15803d;
         }
+
+        .header-cart {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #111;
+            font-size: 14px;
+            font-weight: bold;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: background 0.2s;
+        }
+
+        .header-cart:hover {
+            background: #e0e0e0;
+        }
+
+        .header-cart-badge {
+            background: #16a34a;
+            color: #fff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -201,6 +233,12 @@
         <a href="{% url 'home' %}" class="header-brand">
             <span class="header-brand-name">Borderline</span>
             <span class="header-brand-sub">3D Store</span>
+        </a>
+        <a href="{% url 'ver_carrito' %}" class="header-cart">
+            🛒 Carrito
+            {% if cart_count > 0 %}
+            <span class="header-cart-badge">{{ cart_count }}</span>
+            {% endif %}
         </a>
     </header>
 
@@ -231,7 +269,11 @@
 
             <div class="card-buttons">
                 <a href="{% url 'ver_producto' producto.code %}" class="btn btn-ver">Ver producto</a>
-                <a href="#" class="btn btn-carrito">+ Carrito</a>
+                <form method="post" action="{% url 'agregar_al_carrito' producto.code %}" style="flex:1;display:flex;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="home">
+                    <button type="submit" class="btn btn-carrito" style="width:100%;">+ Carrito</button>
+                </form>
             </div>
         </div>
         {% empty %}
