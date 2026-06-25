@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 
 
@@ -18,11 +19,11 @@ class Productos(models.Model):
     titulo = models.CharField(max_length=50)
     foto = models.CharField(max_length=500)
     descripcion = models.CharField(max_length=300)
-    precio = models.FloatField(default=0.0)
+    precio = models.FloatField(default=0.00)
     sku = models.CharField(max_length=20)
     fecha_alta = models.DateField(auto_now_add=True)
     categoria =models.CharField(choices=CATEGORIAS, max_length=50)
-
+    stock = models.IntegerField(default=0)
     def __str__(self):
         return f"titulo:{self.titulo} - Descripcion:{self.descripcion} - Precio:{self.precio} - Categoria:{self.categoria}"
 
@@ -31,6 +32,7 @@ class Orden(models.Model):
     codigo = models.CharField(max_length=32, unique=True, default=generar_code)
     fecha = models.DateTimeField(auto_now_add=True)
     total = models.FloatField(default=0.0)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='ordenes')
 
     def __str__(self):
         return f"Orden {self.codigo} — ${self.total}"

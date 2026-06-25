@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_pagina }} — Borderline 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+
+        header {
+            background-color: #111;
+            border-bottom: 3px solid #3730a3;
+            padding: 12px 40px;
+            display: flex; align-items: center; gap: 20px;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-logo-img { height: 48px; width: 48px; object-fit: contain; filter: brightness(0) invert(1); }
+        .header-brand { display: flex; flex-direction: column; line-height: 1; text-decoration: none; }
+        .header-brand-name { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: #fff; }
+        .header-brand-sub { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #888; margin-top: 3px; }
+        .staff-badge {
+            background: #3730a3; color: #fff; font-size: 11px; font-weight: bold;
+            padding: 3px 10px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .header-back {
+            margin-left: auto; text-decoration: none; color: #aaa;
+            font-size: 13px; font-weight: bold; padding: 8px 14px;
+            border-radius: 8px; background: #222; transition: background 0.2s;
+        }
+        .header-back:hover { background: #333; color: #fff; }
+
+        /* ── Layout ── */
+        .page-center {
+            display: flex; justify-content: center; padding: 40px 16px 60px;
+        }
+
+        .form-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            padding: 40px 40px;
+            width: 100%; max-width: 640px;
+        }
+
+        .form-title {
+            font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700;
+            color: #111; margin-bottom: 32px;
+            padding-bottom: 16px; border-bottom: 1px solid #eee;
+        }
+
+        /* ── Preview imagen ── */
+        .preview-wrap {
+            display: flex; align-items: center; gap: 16px;
+            background: #f9f9f9; border-radius: 10px; padding: 16px;
+            margin-bottom: 28px; border: 1px solid #eee;
+        }
+        #preview-img {
+            width: 80px; height: 80px; object-fit: contain;
+            border-radius: 8px; background: #f0f0f0; padding: 4px;
+        }
+        .preview-label { font-size: 13px; color: #888; }
+
+        /* ── Grid de campos ── */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .field-full { grid-column: 1 / -1; }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+
+        .field label {
+            font-size: 12px; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 1px; color: #555;
+        }
+
+        .field input, .field select, .field textarea {
+            padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 14px; color: #222; outline: none;
+            transition: border-color 0.2s; font-family: inherit; width: 100%;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: #3730a3; }
+        .field textarea { resize: vertical; }
+
+        .field-errors {
+            background: #fef2f2; border: 1px solid #fca5a5;
+            border-radius: 6px; padding: 8px 12px;
+            font-size: 12px; color: #dc2626;
+        }
+        .field-errors ul { padding-left: 14px; }
+
+        /* ── Acciones ── */
+        .form-actions {
+            display: flex; gap: 12px; justify-content: flex-end;
+            margin-top: 32px; padding-top: 20px; border-top: 1px solid #eee;
+        }
+
+        .btn-cancel {
+            padding: 11px 22px; border-radius: 8px; border: 2px solid #ddd;
+            background: #fff; color: #555; font-size: 14px; font-weight: bold;
+            cursor: pointer; text-decoration: none; transition: border-color 0.2s;
+        }
+        .btn-cancel:hover { border-color: #aaa; }
+
+        .btn-save {
+            padding: 11px 28px; border-radius: 8px; border: none;
+            background: #3730a3; color: #fff; font-size: 14px; font-weight: bold;
+            cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s;
+        }
+        .btn-save:hover { background: #312e81; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="{% static 'productos/img/logo.png' %}" alt="logo" class="header-logo-img">
+        <a href="{% url 'home' %}" class="header-brand">
+            <span class="header-brand-name">Borderline</span>
+            <span class="header-brand-sub">3D Store</span>
+        </a>
+        <span class="staff-badge">⚙ Staff</span>
+        <a href="{% url 'staff_panel' %}" class="header-back">← Volver al panel</a>
+    </header>
+
+    <div class="page-center">
+        <div class="form-card">
+            <h1 class="form-title">{{ titulo_pagina }}</h1>
+
+            {% if producto.foto %}
+            <div class="preview-wrap">
+                <img id="preview-img" src="{{ producto.foto }}" alt="preview">
+                <span class="preview-label">Vista previa de la imagen actual</span>
+            </div>
+            {% else %}
+            <div class="preview-wrap" id="preview-wrap" style="display:none;">
+                <img id="preview-img" src="" alt="preview">
+                <span class="preview-label">Vista previa</span>
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="fields-grid">
+
+                    <div class="field field-full">
+                        <label for="{{ form.titulo.id_for_label }}">{{ form.titulo.label }}</label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}<div class="field-errors">{{ form.titulo.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field field-full">
+                        <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
+                        {{ form.foto }}
+                        {% if form.foto.errors %}<div class="field-errors">{{ form.foto.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field field-full">
+                        <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}<div class="field-errors">{{ form.descripcion.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label for="{{ form.sku.id_for_label }}">{{ form.sku.label }}</label>
+                        {{ form.sku }}
+                        {% if form.sku.errors %}<div class="field-errors">{{ form.sku.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}<div class="field-errors">{{ form.categoria.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label for="{{ form.precio.id_for_label }}">{{ form.precio.label }}</label>
+                        {{ form.precio }}
+                        {% if form.precio.errors %}<div class="field-errors">{{ form.precio.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
+                        {{ form.stock }}
+                        {% if form.stock.errors %}<div class="field-errors">{{ form.stock.errors }}</div>{% endif %}
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'staff_panel' %}" class="btn-cancel">Cancelar</a>
+                    <button type="submit" class="btn-save">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fotoInput = document.getElementById('{{ form.foto.id_for_label }}');
+        const previewImg = document.getElementById('preview-img');
+        const previewWrap = document.getElementById('preview-wrap');
+
+        if (fotoInput) {
+            fotoInput.addEventListener('input', function () {
+                const url = this.value.trim();
+                if (url && previewImg) {
+                    previewImg.src = url;
+                    if (previewWrap) previewWrap.style.display = 'flex';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -4,6 +4,9 @@ from productos.views import (
     agregar_al_carrito, ver_carrito,
     actualizar_cantidad, eliminar_del_carrito,
     checkout, orden_confirmada,
+    mis_compras,
+    staff_panel, staff_agregar, staff_editar,
+    registro, login_view, logout_view,
 )
 
 urlpatterns = [
@@ -15,4 +18,11 @@ urlpatterns = [
     path("carrito/eliminar/<str:code>/", eliminar_del_carrito, name="eliminar_del_carrito"),
     path("carrito/checkout/", checkout, name="checkout"),
     path("orden/<str:codigo>/", orden_confirmada, name="orden_confirmada"),
+    path("mis-compras/", mis_compras, name="mis_compras"),
+    path("staff/", staff_panel, name="staff_panel"),
+    path("staff/agregar/", staff_agregar, name="staff_agregar"),
+    path("staff/editar/<str:code>/", staff_editar, name="staff_editar"),
+    path("registro/", registro, name="registro"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
 ]
