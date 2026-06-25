@@ -40,6 +40,14 @@ E-commerce de productos de impresión 3D desarrollado con Django 6. Permite nave
 - Cada usuario puede ver todas sus órdenes anteriores
 - Se muestra código de orden, fecha, productos comprados, cantidades, precios y total
 
+### Historial de visitas
+- Registra automáticamente cada producto que el usuario autenticado visita
+- Sección "Visitados recientemente" al pie del catálogo con los últimos 8 productos vistos
+- Página dedicada (`/historial/`) con los últimos 30 productos visitados, imagen, precio y stock
+- Botón para activar o desactivar el seguimiento (la preferencia se guarda por usuario)
+- Al desactivar el historial, los registros existentes se eliminan automáticamente
+- Botón para borrar el historial manualmente sin desactivar el seguimiento
+
 ### Panel Staff (`/staff/`)
 - Accesible solo para usuarios con permisos staff
 - Tabla de todos los productos con estado de stock resaltado por color (verde / amarillo / rojo)
@@ -113,7 +121,7 @@ comision-93300/
 │   ├── settings.py
 │   └── urls.py
 ├── productos/                 # App principal
-│   ├── models.py              # Modelos: Productos, Orden, OrdenItem
+│   ├── models.py              # Modelos: Productos, Orden, OrdenItem, HistorialVisita, PerfilUsuario
 │   ├── views.py               # Todas las vistas (tienda, carrito, auth, staff)
 │   ├── forms.py               # Formulario de producto para el panel staff
 │   ├── urls.py                # Rutas de la aplicación
@@ -125,6 +133,7 @@ comision-93300/
 │       ├── carrito.html       # Carrito de compras
 │       ├── confirmacion.html  # Confirmación de compra
 │       ├── mis_compras.html   # Historial de compras del usuario
+│       ├── historial.html     # Historial de visitas del usuario
 │       ├── login.html         # Inicio de sesión
 │       ├── registro.html      # Registro de nuevo usuario
 │       ├── staff_panel.html   # Panel staff — listado de productos
@@ -147,6 +156,9 @@ comision-93300/
 | `/carrito/checkout/` | Confirmar compra |
 | `/orden/<codigo>/` | Confirmación de orden |
 | `/mis-compras/` | Historial de compras del usuario |
+| `/historial/` | Historial de visitas del usuario |
+| `/historial/toggle/` | Activar / desactivar seguimiento de visitas |
+| `/historial/borrar/` | Borrar historial de visitas |
 | `/login/` | Iniciar sesión |
 | `/registro/` | Crear cuenta |
 | `/logout/` | Cerrar sesión |

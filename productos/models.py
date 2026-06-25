@@ -46,3 +46,25 @@ class OrdenItem(models.Model):
 
     def subtotal(self):
         return self.cantidad * self.precio_unitario
+
+
+class PerfilUsuario(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    historial_activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Perfil de {self.usuario.username}"
+
+
+class HistorialVisita(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='historial')
+    producto = models.ForeignKey(Productos, on_delete=models.CASCADE, related_name='visitas')
+    fecha = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # Un registro por usuario+producto; se actualiza la fecha en cada visita
+        unique_together = ('usuario', 'producto')
+        ordering = ['-fecha']
+
+    def __str__(self):
+        return f"{self.usuario.username} → {self.producto.titulo}"

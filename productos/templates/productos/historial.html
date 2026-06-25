@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'productos/img/logo.png' %}">
+    <title>Historial de visitas — Borderline 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+
+        header {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            padding: 12px 40px;
+            display: flex; align-items: center; gap: 20px;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-logo-img { height: 56px; width: 56px; object-fit: contain; }
+        .header-brand { display: flex; flex-direction: column; line-height: 1; text-decoration: none; }
+        .header-brand-name { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: #111; }
+        .header-brand-sub { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: #666; margin-top: 3px; }
+
+        .header-cart {
+            margin-left: auto;
+            display: flex; align-items: center; gap: 8px;
+            text-decoration: none; color: #111; font-size: 14px; font-weight: bold;
+            background: #f0f0f0; border-radius: 8px; padding: 8px 16px; transition: background 0.2s;
+        }
+        .header-cart:hover { background: #e0e0e0; }
+        .header-cart-badge {
+            background: #16a34a; color: #fff; border-radius: 50%;
+            width: 22px; height: 22px; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; font-weight: bold;
+        }
+
+        .header-user-menu { position: relative; }
+        .header-user-menu details { position: relative; }
+        .header-user-menu summary {
+            list-style: none; display: flex; align-items: center; gap: 6px;
+            padding: 8px 14px; border-radius: 8px; background: #e0e7ff; color: #3730a3;
+            font-size: 13px; font-weight: bold; cursor: pointer; user-select: none; transition: background 0.2s;
+        }
+        .header-user-menu summary::-webkit-details-marker { display: none; }
+        .header-user-menu summary:hover { background: #c7d2fe; }
+        .dropdown-chevron { font-size: 10px; transition: transform 0.2s; }
+        details[open] .dropdown-chevron { transform: rotate(180deg); }
+        .dropdown-menu {
+            position: absolute; right: 0; top: calc(100% + 8px);
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 180px; z-index: 200; overflow: hidden;
+        }
+        .dropdown-menu a, .dropdown-menu button {
+            display: block; width: 100%; padding: 12px 16px; text-align: left;
+            font-size: 14px; text-decoration: none; color: #333;
+            background: none; border: none; cursor: pointer; transition: background 0.15s;
+        }
+        .dropdown-menu a:hover, .dropdown-menu button:hover { background: #f5f5f5; }
+        .dropdown-menu .separator { height: 1px; background: #f0f0f0; margin: 4px 0; }
+        .dropdown-menu .logout-btn { color: #dc2626; }
+        .dropdown-menu a.active-page { background: #e0e7ff; color: #3730a3; font-weight: bold; }
+
+        /* ── Contenido ── */
+        .main-content { max-width: 900px; margin: 40px auto; padding: 0 16px 60px; }
+
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+        }
+        h1 { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; color: #111; }
+        .page-subtitle { font-size: 13px; color: #888; margin-top: 4px; }
+
+        /* ── Grid de productos visitados ── */
+        .historial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .historial-card {
+            background: #fff; border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden; display: flex; flex-direction: column;
+            text-decoration: none; color: inherit;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .historial-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.13); transform: translateY(-2px); }
+
+        .card-img-wrap {
+            height: 150px; display: flex; align-items: center; justify-content: center;
+            background: #f9f9f9; padding: 16px;
+        }
+        .card-img-wrap img { max-height: 120px; max-width: 100%; object-fit: contain; }
+        .sin-img { font-size: 12px; color: #bbb; }
+
+        .card-info { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+        .card-titulo { font-size: 14px; font-weight: bold; color: #222; line-height: 1.3; }
+
+        .card-precio { font-size: 16px; font-weight: bold; color: #16a34a; }
+
+        .card-fecha { font-size: 11px; color: #aaa; margin-top: auto; }
+
+        .card-stock-badge {
+            display: inline-block; font-size: 11px; font-weight: bold;
+            padding: 2px 8px; border-radius: 20px; width: fit-content;
+        }
+        .en-stock { background: #dcfce7; color: #16a34a; }
+        .sin-stock { background: #fee2e2; color: #dc2626; }
+
+        /* ── Estado vacío ── */
+        .vacio {
+            text-align: center; padding: 80px 0; color: #888; font-size: 16px;
+        }
+        .vacio a {
+            display: inline-block; margin-top: 20px; background: #111; color: #fff;
+            padding: 12px 28px; border-radius: 8px; text-decoration: none;
+            font-weight: bold; font-size: 14px;
+        }
+        .vacio a:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="{% static 'productos/img/logo.png' %}" alt="Borderline logo" class="header-logo-img">
+        <a href="{% url 'home' %}" class="header-brand">
+            <span class="header-brand-name">Borderline</span>
+            <span class="header-brand-sub">3D Store</span>
+        </a>
+
+        <a href="{% url 'ver_carrito' %}" class="header-cart">
+            🛒 Carrito
+            {% if cart_count > 0 %}
+            <span class="header-cart-badge">{{ cart_count }}</span>
+            {% endif %}
+        </a>
+
+        <div class="header-user-menu">
+            <details>
+                <summary>
+                    👤 {{ user.username }}
+                    <span class="dropdown-chevron">▼</span>
+                </summary>
+                <div class="dropdown-menu">
+                    <a href="{% url 'mis_compras' %}">📦 Mis compras</a>
+                    <a href="{% url 'historial' %}" class="active-page">🕐 Historial</a>
+                    {% if user.is_staff %}
+                    <a href="{% url 'staff_panel' %}">⚙ Panel Staff</a>
+                    {% endif %}
+                    <div class="separator"></div>
+                    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Cerrar sesión</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>Historial de visitas</h1>
+                {% if visitas %}
+                <p class="page-subtitle">Últimos {{ visitas|length }} productos visitados</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if visitas %}
+        <div class="historial-grid">
+            {% for visita in visitas %}
+            <a href="{% url 'ver_producto' visita.producto.code %}" class="historial-card">
+                <div class="card-img-wrap">
+                    {% if visita.producto.foto %}
+                        <img src="{{ visita.producto.foto }}" alt="{{ visita.producto.titulo }}">
+                    {% else %}
+                        <span class="sin-img">Sin imagen</span>
+                    {% endif %}
+                </div>
+                <div class="card-info">
+                    <span class="card-titulo">{{ visita.producto.titulo }}</span>
+                    <span class="card-precio">${{ visita.producto.precio }}</span>
+                    {% if visita.producto.stock > 0 %}
+                        <span class="card-stock-badge en-stock">Con stock</span>
+                    {% else %}
+                        <span class="card-stock-badge sin-stock">Sin stock</span>
+                    {% endif %}
+                    <span class="card-fecha">Visto {{ visita.fecha|date:"d/m/Y H:i" }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="vacio">
+            <p>Todavía no visitaste ningún producto.</p>
+            <a href="{% url 'home' %}">Ver productos</a>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

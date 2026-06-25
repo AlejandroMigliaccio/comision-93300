@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'productos/img/logo.png' %}">
     <title>Borderline-3D</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
@@ -424,6 +425,93 @@
             text-decoration: underline;
         }
 
+        /* ── Historial reciente ── */
+        .historial-section {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid #eee;
+        }
+
+        .historial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .historial-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .historial-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-historial {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-toggle-on  { background: #dcfce7; color: #16a34a; }
+        .btn-toggle-on:hover  { background: #bbf7d0; }
+        .btn-toggle-off { background: #fee2e2; color: #dc2626; }
+        .btn-toggle-off:hover { background: #fecaca; }
+        .btn-borrar     { background: #f0f0f0; color: #555; }
+        .btn-borrar:hover { background: #e0e0e0; }
+
+        .historial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .historial-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+        .historial-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.12); transform: translateY(-2px); }
+
+        .hcard-img {
+            height: 110px;
+            display: flex; align-items: center; justify-content: center;
+            background: #f9f9f9; padding: 10px;
+        }
+        .hcard-img img { max-height: 90px; max-width: 100%; object-fit: contain; }
+        .hcard-img .sin-img { font-size: 11px; color: #ccc; }
+
+        .hcard-info { padding: 10px 12px; }
+        .hcard-titulo { font-size: 13px; font-weight: bold; color: #222; line-height: 1.3; margin-bottom: 4px; }
+        .hcard-precio { font-size: 13px; font-weight: bold; color: #16a34a; }
+
+        .historial-apagado {
+            text-align: center;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
         /* ── Banner Instagram ── */
         .ig-banner {
             background: linear-gradient(90deg, #833ab4, #fd1d1d, #fcb045);
@@ -480,6 +568,7 @@
                     </summary>
                     <div class="dropdown-menu">
                         <a href="{% url 'mis_compras' %}">📦 Mis compras</a>
+                        <a href="{% url 'historial' %}">🕐 Historial</a>
                         {% if user.is_staff %}
                         <a href="{% url 'staff_panel' %}">⚙ Panel Staff</a>
                         {% endif %}
@@ -636,6 +725,61 @@
             </div>
         </div>
     </div>
+
+    {% if user.is_authenticated %}
+    <div class="historial-section">
+        <div class="historial-header">
+            <span class="historial-titulo">🕐 Visitados recientemente</span>
+            <div class="historial-actions">
+                <form method="post" action="{% url 'toggle_historial' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="/">
+                    {% if historial_activo %}
+                    <button type="submit" class="btn-historial btn-toggle-on">✅ Historial activo</button>
+                    {% else %}
+                    <button type="submit" class="btn-historial btn-toggle-off">⛔ Historial desactivado</button>
+                    {% endif %}
+                </form>
+                {% if historial_activo and visitas_recientes %}
+                <form method="post" action="{% url 'borrar_historial' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="/">
+                    <button type="submit" class="btn-historial btn-borrar">🗑 Borrar historial</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if historial_activo %}
+            {% if visitas_recientes %}
+            <div class="historial-grid">
+                {% for visita in visitas_recientes %}
+                <a href="{% url 'ver_producto' visita.producto.code %}" class="historial-card">
+                    <div class="hcard-img">
+                        {% if visita.producto.foto %}
+                            <img src="{{ visita.producto.foto }}" alt="{{ visita.producto.titulo }}">
+                        {% else %}
+                            <span class="sin-img">Sin imagen</span>
+                        {% endif %}
+                    </div>
+                    <div class="hcard-info">
+                        <p class="hcard-titulo">{{ visita.producto.titulo }}</p>
+                        <p class="hcard-precio">${{ visita.producto.precio }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="font-size:13px; color:#aaa;">Todavía no visitaste ningún producto.</p>
+            {% endif %}
+        {% else %}
+        <div class="historial-apagado">
+            El seguimiento de productos visitados está desactivado.
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
     </div>
 </body>
 </html>
