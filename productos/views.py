@@ -4,6 +4,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
 from productos.models import Productos, Orden, OrdenItem
 from productos.forms import ProductoForm
 
@@ -18,24 +20,35 @@ def _cart_count(request):
 
 
 def home(request):
-    # Lee el filtro de categoría de la URL (ej: ?categoria=ropa)
     categoria_seleccionada = request.GET.get('categoria', '')
-    # Lee el texto de búsqueda de la URL (ej: ?q=zapatillas) y elimina espacios
     busqueda = request.GET.get('q', '').strip()
-    # Trae todos los productos de la base de datos
+    orden = request.GET.get('orden', '')
+
     list_productos = Productos.objects.all()
+
     if categoria_seleccionada:
-        # Si hay categoría elegida, filtra solo los productos de esa categoría
         list_productos = list_productos.filter(categoria=categoria_seleccionada)
     if busqueda:
-        # Si hay búsqueda, filtra productos cuyo título contenga el texto (sin importar mayúsculas)
         list_productos = list_productos.filter(titulo__icontains=busqueda)
+
+    if orden == 'mas_vendidos':
+        list_productos = list_productos.annotate(
+            total_vendido=Coalesce(Sum('ordenitem__cantidad'), Value(0))
+        ).order_by('-total_vendido')
+    elif orden == 'disponibles':
+        list_productos = list_productos.filter(stock__gt=0)
+    elif orden == 'precio_asc':
+        list_productos = list_productos.order_by('precio')
+    elif orden == 'precio_desc':
+        list_productos = list_productos.order_by('-precio')
+
     return render(request, "productos/productos.html", {
-        "lista_productos": list_productos,              # productos filtrados
-        "categorias": Productos.CATEGORIAS,             # opciones de categoría para el select
-        "categoria_seleccionada": categoria_seleccionada,  # para marcar el filtro activo en el select
-        "busqueda": busqueda,                           # para mantener el texto en el input de búsqueda
-        "cart_count": _cart_count(request),             # cantidad de ítems en el carrito (badge)
+        "lista_productos": list_productos,
+        "categorias": Productos.CATEGORIAS,
+        "categoria_seleccionada": categoria_seleccionada,
+        "busqueda": busqueda,
+        "orden": orden,
+        "cart_count": _cart_count(request),
     })
 
 

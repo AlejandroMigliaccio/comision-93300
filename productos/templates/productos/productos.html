@@ -237,6 +237,18 @@
             color: #dc2626;
         }
 
+        .badge-vendido {
+            display: inline-block;
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
         .btn-carrito:disabled,
         .btn-carrito.disabled {
             background-color: #ccc;
@@ -411,6 +423,37 @@
         .search-clear a:hover {
             text-decoration: underline;
         }
+
+        /* ── Banner Instagram ── */
+        .ig-banner {
+            background: linear-gradient(90deg, #833ab4, #fd1d1d, #fcb045);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ig-banner a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+
+        .ig-banner a:hover { opacity: 0.85; }
+
+        .ig-banner svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        .ig-banner .ig-handle {
+            font-size: 13px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -455,6 +498,18 @@
         </div>
     </header>
 
+    <div class="ig-banner">
+        <a href="https://www.instagram.com/borderline3d/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+            </svg>
+            Seguinos en Instagram
+            <span class="ig-handle">@borderline3d</span>
+        </a>
+    </div>
+
     <div class="main-content">
     <h1>Lista de Productos</h1>
 
@@ -476,16 +531,52 @@
 
     <div class="layout">
         <aside class="sidebar">
+            <p class="sidebar-title">Ordenar</p>
+            <ul class="sidebar-list" style="margin-bottom: 20px;">
+                <li>
+                    <a href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada }}&{% endif %}{% if busqueda %}q={{ busqueda }}&{% endif %}"
+                       class="all-link {% if not orden %}active{% endif %}">
+                        Predeterminado
+                    </a>
+                </li>
+                <li>
+                    <a href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada }}&{% endif %}{% if busqueda %}q={{ busqueda }}&{% endif %}orden=mas_vendidos"
+                       class="{% if orden == 'mas_vendidos' %}active{% endif %}">
+                        🏆 Más vendidos
+                    </a>
+                </li>
+                <li>
+                    <a href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada }}&{% endif %}{% if busqueda %}q={{ busqueda }}&{% endif %}orden=disponibles"
+                       class="{% if orden == 'disponibles' %}active{% endif %}">
+                        ✅ Con stock
+                    </a>
+                </li>
+                <li>
+                    <a href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada }}&{% endif %}{% if busqueda %}q={{ busqueda }}&{% endif %}orden=precio_asc"
+                       class="{% if orden == 'precio_asc' %}active{% endif %}">
+                        💲 Precio: menor a mayor
+                    </a>
+                </li>
+                <li>
+                    <a href="?{% if categoria_seleccionada %}categoria={{ categoria_seleccionada }}&{% endif %}{% if busqueda %}q={{ busqueda }}&{% endif %}orden=precio_desc"
+                       class="{% if orden == 'precio_desc' %}active{% endif %}">
+                        💲 Precio: mayor a menor
+                    </a>
+                </li>
+            </ul>
+
             <p class="sidebar-title">Categorías</p>
             <ul class="sidebar-list">
                 <li>
-                    <a href="{% url 'home' %}" class="all-link {% if not categoria_seleccionada %}active{% endif %}">
+                    <a href="{% url 'home' %}{% if orden %}?orden={{ orden }}{% endif %}"
+                       class="all-link {% if not categoria_seleccionada %}active{% endif %}">
                         Todas
                     </a>
                 </li>
                 {% for valor, etiqueta in categorias %}
                 <li>
-                    <a href="?categoria={{ valor }}" class="{% if categoria_seleccionada == valor %}active{% endif %}">
+                    <a href="?categoria={{ valor }}{% if orden %}&orden={{ orden }}{% endif %}"
+                       class="{% if categoria_seleccionada == valor %}active{% endif %}">
                         {{ etiqueta }}
                     </a>
                 </li>
@@ -506,6 +597,9 @@
                     </div>
 
                     <div class="card-body">
+                        {% if orden == 'mas_vendidos' and producto.total_vendido %}
+                        <span class="badge-vendido">🏆 {{ producto.total_vendido }} vendidos</span>
+                        {% endif %}
                         <span class="card-titulo">{{ producto.titulo }}</span>
                         <span class="card-categoria">{{ producto.get_categoria_display }}</span>
                         <p class="card-descripcion">{{ producto.descripcion }}</p>
