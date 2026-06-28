@@ -324,6 +324,19 @@
         .btn-registro { background: #3730a3; color: #fff; }
         .btn-registro:hover { background: #312e81; }
 
+        .pokedex-promo {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .btn-pokedex {
+            text-decoration: none; padding: 8px 14px; border-radius: 7px;
+            font-weight: bold; font-size: 13px; transition: background 0.2s;
+            background: #dc2626; color: #fff; white-space: nowrap;
+        }
+        .btn-pokedex:hover { background: #b91c1c; }
+        .pokedex-tagline {
+            font-size: 12px; color: #666; font-style: italic; white-space: nowrap;
+        }
+
         /* ── Dropdown usuario ── */
         .header-user-menu { position: relative; }
         .header-user-menu details { position: relative; }
@@ -551,6 +564,10 @@
             <span class="header-brand-name">Borderline</span>
             <span class="header-brand-sub">3D Store</span>
         </a>
+        <div class="pokedex-promo">
+            <a href="{% url 'pokedex' %}" class="btn-pokedex">🔴 Pokédex</a>
+            <span class="pokedex-tagline">Elegí tu Pokémon favorito e imprimilo</span>
+        </div>
         <a href="{% url 'ver_carrito' %}" class="header-cart">
             🛒 Carrito
             {% if cart_count > 0 %}

@@ -7,6 +7,7 @@ from productos.views import (
     mis_compras, historial, toggle_historial, borrar_historial,
     staff_panel, staff_agregar, staff_editar,
     registro, login_view, logout_view,
+    pokedex,
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path("registro/", registro, name="registro"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path("pokedex/", pokedex, name="pokedex"),
 ]
