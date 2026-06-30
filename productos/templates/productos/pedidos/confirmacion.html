@@ -142,12 +142,17 @@
 
         .orden-total-valor { color: #16a34a; }
 
-        .btn-volver {
-            display: inline-block;
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
             margin-top: 32px;
-            background: #111;
-            color: #fff;
-            padding: 14px 36px;
+        }
+
+        .btn-volver, .btn-ticket {
+            display: inline-block;
+            padding: 14px 28px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
@@ -156,7 +161,11 @@
             transition: background 0.2s;
         }
 
-        .btn-volver:hover { background: #333; }
+        .btn-volver { background: #e5e5e5; color: #333; }
+        .btn-volver:hover { background: #d0d0d0; }
+
+        .btn-ticket { background: #111; color: #fff; }
+        .btn-ticket:hover { background: #333; }
     </style>
 </head>
 <body>
@@ -193,7 +202,10 @@
                 </div>
             </div>
 
-            <a href="{% url 'home' %}" class="btn-volver">← Volver a la tienda</a>
+            <div class="btn-group">
+                <a href="{% url 'home' %}" class="btn-volver">← Volver a la tienda</a>
+                <a href="{% url 'ticket_orden' orden.codigo %}" class="btn-ticket">🖨 Ver ticket / PDF</a>
+            </div>
         </div>
     </div>
 

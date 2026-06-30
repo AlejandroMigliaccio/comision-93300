@@ -1,6 +1,10 @@
 # pedidos.py — Vistas relacionadas con el proceso de compra y órdenes.
 # Incluye el checkout, la confirmación de orden y el historial de compras del usuario.
 
+import io
+import base64
+import qrcode
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from productos.models import Productos, Orden, OrdenItem
@@ -44,6 +48,20 @@ def orden_confirmada(request, codigo):
     return render(request, 'productos/pedidos/confirmacion.html', {
         'orden': orden,
         'cart_count': 0,
+    })
+
+
+def ticket_orden(request, codigo):
+    orden = get_object_or_404(Orden, codigo=codigo)
+
+    qr_url = f"https://borderline3d.com/factura/?orden={orden.codigo}"
+    buffer = io.BytesIO()
+    qrcode.make(qr_url).save(buffer, format='PNG')
+    qr_b64 = base64.b64encode(buffer.getvalue()).decode()
+
+    return render(request, 'productos/pedidos/ticket.html', {
+        'orden': orden,
+        'qr_b64': qr_b64,
     })
 
 
