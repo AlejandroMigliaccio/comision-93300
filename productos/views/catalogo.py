@@ -8,6 +8,13 @@ from productos.models import Productos, HistorialVisita
 from .helpers import _cart_count, _perfil
 
 
+def landing(request):
+    return render(request, 'productos/catalogo/index.html', {
+        'cart_count': _cart_count(request),
+        'total_productos': Productos.objects.count(),
+    })
+
+
 def home(request):
     # Página principal: muestra el catálogo completo con filtros opcionales.
     # Acepta los parámetros GET: ?categoria=, ?q= (búsqueda) y ?orden=.

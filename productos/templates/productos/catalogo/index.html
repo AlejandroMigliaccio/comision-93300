@@ -1,0 +1,534 @@
+{% extends 'productos/base.html' %}
+{% load static %}
+
+{% block title %}Borderline 3D Store{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ── NAV landing (override del header de base) ── */
+    .landing-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 40px;
+        background: rgba(13,13,13,0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .nav-logo {
+        height: 44px;
+        width: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .nav-brand {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+    }
+
+    .nav-brand-name {
+        font-family: 'Cinzel', serif;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    .nav-brand-sub {
+        font-family: 'Cinzel', serif;
+        font-size: 9px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+        margin-top: 3px;
+    }
+
+    .nav-spacer { flex: 1; }
+
+    .nav-link {
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #aaa;
+        transition: color 0.2s;
+    }
+    .nav-link:hover { color: #fff; }
+
+    .nav-cta {
+        background: #fff;
+        color: #111;
+        padding: 9px 22px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    .nav-cta:hover { background: #ddd; }
+
+    /* ── HERO ── */
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 100px 24px 80px;
+        background:
+            radial-gradient(ellipse 60% 50% at 50% 60%, rgba(255,255,255,0.04) 0%, transparent 70%),
+            #0d0d0d;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-logo {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 32px;
+        position: relative;
+        filter: drop-shadow(0 0 28px rgba(255,255,255,0.18));
+    }
+
+    .hero-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 28px;
+        position: relative;
+    }
+
+    .hero-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(42px, 8vw, 96px);
+        font-weight: 900;
+        letter-spacing: 10px;
+        text-transform: uppercase;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .hero-title-sub {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(14px, 3vw, 22px);
+        font-weight: 400;
+        letter-spacing: 12px;
+        text-transform: uppercase;
+        color: #666;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .hero-desc {
+        max-width: 520px;
+        font-size: 16px;
+        line-height: 1.75;
+        color: #999;
+        margin-bottom: 52px;
+        position: relative;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+        position: relative;
+    }
+
+    .btn-primary {
+        background: #fff;
+        color: #111;
+        padding: 16px 44px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #e0e0e0; transform: translateY(-2px); }
+
+    .btn-secondary {
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #ccc;
+        padding: 16px 36px;
+        border-radius: 6px;
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+
+    .hero-scroll {
+        position: absolute;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: #444;
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    .scroll-line {
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(to bottom, #444, transparent);
+        animation: scroll-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scroll-pulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+
+    /* ── Secciones ── */
+    .section {
+        padding: 100px 24px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .section-label {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: #555;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .section-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(24px, 4vw, 38px);
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 56px;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .category-card {
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 32px 20px 28px;
+        text-align: center;
+        background: rgba(255,255,255,0.03);
+        transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        text-decoration: none;
+    }
+    .category-card:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.2);
+        transform: translateY(-4px);
+    }
+
+    .category-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+
+    .category-name {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #ccc;
+    }
+
+    .divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 32px;
+    }
+
+    .feature-item { display: flex; flex-direction: column; gap: 12px; }
+
+    .feature-icon {
+        font-size: 28px;
+        width: 52px;
+        height: 52px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .feature-title {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #ddd;
+    }
+
+    .feature-text { font-size: 14px; line-height: 1.65; color: #777; }
+
+    /* ── CTA ── */
+    .cta-section {
+        background: #fff;
+        color: #111;
+        padding: 100px 24px;
+        text-align: center;
+    }
+
+    .cta-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(28px, 5vw, 52px);
+        font-weight: 900;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+    }
+
+    .cta-sub { font-size: 16px; color: #666; margin-bottom: 44px; }
+
+    .btn-dark {
+        background: #111;
+        color: #fff;
+        padding: 18px 52px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+        display: inline-block;
+    }
+    .btn-dark:hover { background: #333; transform: translateY(-2px); }
+
+    /* ── Footer ── */
+    .landing-footer {
+        background: #080808;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding: 40px 24px;
+        text-align: center;
+        color: #444;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+    .landing-footer a { color: #666; text-decoration: none; }
+    .landing-footer a:hover { color: #aaa; }
+
+    /* ── Overrides modo claro — landing ── */
+    html.light-mode .landing-nav {
+        background: rgba(244,244,244,0.88);
+        border-bottom-color: rgba(0,0,0,0.09);
+    }
+    html.light-mode .nav-brand-name { color: #111; }
+    html.light-mode .nav-brand-sub  { color: rgba(0,0,0,0.4); }
+    html.light-mode .nav-link       { color: rgba(0,0,0,0.55); }
+    html.light-mode .nav-link:hover { color: #111; }
+    html.light-mode .nav-cta        { background: #111; color: #fff; }
+    html.light-mode .nav-cta:hover  { background: #333; }
+
+    html.light-mode .hero {
+        background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(0,0,0,0.03) 0%, transparent 70%), #f4f4f4;
+    }
+    html.light-mode .hero::before {
+        background-image:
+            linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    }
+    html.light-mode .hero-title     { color: #111; }
+    html.light-mode .hero-title-sub { color: rgba(0,0,0,0.35); }
+    html.light-mode .hero-eyebrow   { color: rgba(0,0,0,0.4); }
+    html.light-mode .hero-desc      { color: rgba(0,0,0,0.55); }
+    html.light-mode .hero-scroll    { color: rgba(0,0,0,0.3); }
+    html.light-mode .scroll-line    { background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent); }
+
+    html.light-mode .btn-primary        { background: #111; color: #fff; }
+    html.light-mode .btn-primary:hover  { background: #333; }
+    html.light-mode .btn-secondary      { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.7); }
+    html.light-mode .btn-secondary:hover { border-color: rgba(0,0,0,0.5); color: #111; }
+
+    html.light-mode .section-title  { color: #111; }
+    html.light-mode .section-label  { color: rgba(0,0,0,0.35); }
+
+    html.light-mode .category-card  { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.09); }
+    html.light-mode .category-card:hover { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.2); }
+    html.light-mode .category-name  { color: rgba(0,0,0,0.7); }
+
+    html.light-mode .feature-icon   { border-color: rgba(0,0,0,0.1); }
+    html.light-mode .feature-title  { color: rgba(0,0,0,0.8); }
+    html.light-mode .feature-text   { color: rgba(0,0,0,0.55); }
+
+    html.light-mode .divider { background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent); }
+
+    html.light-mode .cta-section { background: #111; color: #fff; }
+    html.light-mode .cta-sub     { color: rgba(255,255,255,0.65); }
+    html.light-mode .btn-dark       { background: #fff; color: #111; }
+    html.light-mode .btn-dark:hover { background: #e0e0e0; }
+
+    html.light-mode .landing-footer {
+        background: #e8e8e8;
+        border-top-color: rgba(0,0,0,0.08);
+        color: rgba(0,0,0,0.45);
+    }
+    html.light-mode .landing-footer a       { color: rgba(0,0,0,0.55); }
+    html.light-mode .landing-footer a:hover { color: rgba(0,0,0,0.8); }
+</style>
+{% endblock %}
+
+{% block header %}
+<nav class="landing-nav">
+    <img src="{% static 'productos/img/logo.png' %}" alt="Logo" class="nav-logo">
+    <a href="{% url 'landing' %}" class="nav-brand">
+        <span class="nav-brand-name">Borderline</span>
+        <span class="nav-brand-sub">3D Store</span>
+    </a>
+    <div class="nav-spacer"></div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'mis_compras' %}" class="nav-link">Mis compras</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="nav-link">Ingresar</a>
+    {% endif %}
+    <a href="{% url 'home' %}" class="nav-cta">Ver tienda</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <img src="{% static 'productos/img/logo.png' %}" alt="Borderline logo" class="hero-logo">
+    <p class="hero-eyebrow">Impresión 3D · Diseño personalizado</p>
+    <h1 class="hero-title">Borderline</h1>
+    <p class="hero-title-sub">3D Store</p>
+    <p class="hero-desc">
+        Creamos piezas únicas con tecnología de impresión 3D.
+        Juguetes, decoración, repuestos, juegos de mesa y coleccionables
+        fabricados con precisión y pasión.
+    </p>
+    <div class="hero-buttons">
+        <a href="{% url 'home' %}" class="btn-primary">Ir a la tienda</a>
+        <a href="#categorias" class="btn-secondary">Conocer más</a>
+    </div>
+    <div class="hero-scroll">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<div id="categorias">
+    <div class="section">
+        <p class="section-label">Lo que hacemos</p>
+        <h2 class="section-title">Nuestras categorías</h2>
+        <div class="categories-grid">
+            <a href="{% url 'home' %}?categoria=Juguetes+para+ni%C3%B1os" class="category-card">
+                <span class="category-icon">🧸</span>
+                <span class="category-name">Juguetes</span>
+            </a>
+            <a href="{% url 'home' %}?categoria=Decoraci%C3%B3n+general" class="category-card">
+                <span class="category-icon">🪴</span>
+                <span class="category-name">Decoración</span>
+            </a>
+            <a href="{% url 'home' %}?categoria=Piezas+de+repuesto" class="category-card">
+                <span class="category-icon">⚙️</span>
+                <span class="category-name">Repuestos</span>
+            </a>
+            <a href="{% url 'home' %}?categoria=Juegos+de+mesa" class="category-card">
+                <span class="category-icon">🎲</span>
+                <span class="category-name">Juegos de mesa</span>
+            </a>
+            <a href="{% url 'home' %}?categoria=Pokemones+de+uso+carios" class="category-card">
+                <span class="category-icon">⚡</span>
+                <span class="category-name">Pokémon</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+    <p class="section-label">Por qué elegirnos</p>
+    <h2 class="section-title">Calidad en cada capa</h2>
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon">🖨️</div>
+            <div class="feature-title">Impresión de precisión</div>
+            <p class="feature-text">Cada pieza se fabrica con impresoras de última generación, garantizando detalle y durabilidad en cada producto.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🎨</div>
+            <div class="feature-title">Diseños únicos</div>
+            <p class="feature-text">Trabajamos con modelos originales diseñados a medida. Nada genérico: cada producto es pensado desde cero.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">📦</div>
+            <div class="feature-title">Envío a todo el país</div>
+            <p class="feature-text">Despachamos a cualquier punto de Argentina. Tu pedido llega protegido y en el menor tiempo posible.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🤝</div>
+            <div class="feature-title">Atención personalizada</div>
+            <p class="feature-text">¿Tenés un proyecto especial? Contactanos y convertimos tu idea en una pieza real impresa en 3D.</p>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <h2 class="cta-title">Empezá a explorar</h2>
+    <p class="cta-sub">Más de {{ total_productos }} productos disponibles para vos.</p>
+    <a href="{% url 'home' %}" class="btn-dark">Ver toda la tienda →</a>
+</div>
+
+<footer class="landing-footer">
+    <p>© 2026 Borderline 3D Store &nbsp;·&nbsp;
+        <a href="{% url 'home' %}">Tienda</a> &nbsp;·&nbsp;
+        {% if user.is_authenticated %}
+            <a href="{% url 'mis_compras' %}">Mis compras</a>
+        {% else %}
+            <a href="{% url 'registro' %}">Crear cuenta</a>
+        {% endif %}
+    </p>
+</footer>
+{% endblock %}

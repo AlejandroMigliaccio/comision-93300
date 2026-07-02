@@ -1,0 +1,507 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>if(localStorage.getItem('theme')==='light')document.documentElement.classList.add('light-mode');</script>
+    <link rel="icon" type="image/png" href="{% static 'productos/img/logo.png' %}">
+    <title>{% block title %}Borderline 3D{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Variables de tema ── */
+        :root {
+            --bg:           #0d0d0d;
+            --surface:      #161616;
+            --surface-2:    #1f1f1f;
+            --border:       rgba(255,255,255,0.08);
+            --text:         #f0f0f0;
+            --text-muted:   rgba(255,255,255,0.4);
+            --text-2:       rgba(255,255,255,0.65);
+            --green:        #22c55e;
+            --red:          #ef4444;
+
+            /* Header */
+            --header-bg:    rgba(13,13,13,0.92);
+
+            /* Dropdown */
+            --dropdown-bg:          #1a1a1a;
+            --dropdown-item-color:  rgba(255,255,255,0.7);
+
+            /* Estados interactivos */
+            --hover-bg:  rgba(255,255,255,0.06);
+            --active-bg: rgba(255,255,255,0.12);
+
+            /* Botones de borde (login, carrito nav, etc.) */
+            --outline-bg:     rgba(255,255,255,0.06);
+            --outline-border: rgba(255,255,255,0.08);
+
+            /* Botón Registrarse */
+            --btn-reg-bg:    #fff;
+            --btn-reg-color: #111;
+            --btn-reg-hover: #ddd;
+
+            /* Botones de acción principal (confirmar compra, submit, etc.) */
+            --btn-act-bg:    rgba(255,255,255,0.9);
+            --btn-act-color: #111;
+            --btn-act-hover: #fff;
+
+            /* Inputs */
+            --input-bg:     #1f1f1f;
+            --input-border: rgba(255,255,255,0.15);
+            --input-focus:  rgba(255,255,255,0.4);
+            --input-color:  #fff;
+
+            /* Estados de error */
+            --error-bg:     rgba(127,29,29,0.4);
+            --error-border: rgba(239,68,68,0.4);
+            --error-color:  #f87171;
+
+            /* Toggle de tema */
+            --toggle-bg:  var(--surface);
+            --toggle-shadow: rgba(0,0,0,0.5);
+        }
+
+        html.light-mode {
+            --bg:           #f4f4f4;
+            --surface:      #ffffff;
+            --surface-2:    #eeeeee;
+            --border:       rgba(0,0,0,0.09);
+            --text:         #111111;
+            --text-muted:   rgba(0,0,0,0.45);
+            --text-2:       rgba(0,0,0,0.65);
+            --green:        #16a34a;
+            --red:          #dc2626;
+
+            --header-bg:    rgba(255,255,255,0.92);
+
+            --dropdown-bg:          #ffffff;
+            --dropdown-item-color:  #333;
+
+            --hover-bg:  rgba(0,0,0,0.04);
+            --active-bg: rgba(0,0,0,0.08);
+
+            --outline-bg:     rgba(0,0,0,0.04);
+            --outline-border: rgba(0,0,0,0.1);
+
+            --btn-reg-bg:    #111;
+            --btn-reg-color: #fff;
+            --btn-reg-hover: #333;
+
+            --btn-act-bg:    #111;
+            --btn-act-color: #fff;
+            --btn-act-hover: #333;
+
+            --input-bg:     #ffffff;
+            --input-border: rgba(0,0,0,0.15);
+            --input-focus:  rgba(0,0,0,0.4);
+            --input-color:  #111;
+
+            --error-bg:     #fef2f2;
+            --error-border: #fca5a5;
+            --error-color:  #dc2626;
+
+            --toggle-bg:  #fff;
+            --toggle-shadow: rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header / Nav ── */
+        header {
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo-img {
+            height: 52px;
+            width: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .header-brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .header-brand-name {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--text);
+        }
+
+        .header-brand-sub {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .btn-pokedex {
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 13px;
+            background: #dc2626;
+            color: #fff;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .btn-pokedex:hover { background: #b91c1c; }
+
+        .header-cart {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: bold;
+            background: var(--outline-bg);
+            border: 1px solid var(--outline-border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: background 0.2s;
+        }
+        .header-cart:hover { background: var(--hover-bg); }
+
+        .header-cart-badge {
+            background: var(--green);
+            color: #fff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .header-auth { display: flex; align-items: center; gap: 8px; }
+
+        .btn-login {
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 13px;
+            background: var(--outline-bg);
+            border: 1px solid var(--outline-border);
+            color: var(--text);
+            transition: background 0.2s;
+        }
+        .btn-login:hover { background: var(--hover-bg); }
+
+        .btn-registro {
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 13px;
+            background: var(--btn-reg-bg);
+            color: var(--btn-reg-color);
+            transition: background 0.2s;
+        }
+        .btn-registro:hover { background: var(--btn-reg-hover); }
+
+        /* ── Dropdown usuario ── */
+        .header-user-menu { position: relative; }
+        .header-user-menu details { position: relative; }
+
+        .header-user-menu summary {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: var(--outline-bg);
+            border: 1px solid var(--outline-border);
+            color: var(--text);
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .header-user-menu summary::-webkit-details-marker { display: none; }
+        .header-user-menu summary:hover { background: var(--hover-bg); }
+
+        .dropdown-chevron { font-size: 10px; transition: transform 0.2s; }
+        details[open] .dropdown-chevron { transform: rotate(180deg); }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: var(--dropdown-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            min-width: 180px;
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 14px;
+            text-decoration: none;
+            color: var(--dropdown-item-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .dropdown-menu a:hover, .dropdown-menu button:hover {
+            background: var(--hover-bg);
+            color: var(--text);
+        }
+        .dropdown-menu .separator { height: 1px; background: var(--border); margin: 4px 0; }
+        .dropdown-menu .logout-btn { color: #f87171; }
+        html.light-mode .dropdown-menu .logout-btn { color: #dc2626; }
+
+        /* ── Botón de tema ── */
+        .btn-theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--toggle-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding: 0;
+            box-shadow: 0 2px 12px var(--toggle-shadow);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .btn-theme-toggle:hover { transform: scale(1.12); }
+
+        .icon-dark  { display: inline-block; }
+        .icon-light { display: none; }
+        html.light-mode .icon-dark  { display: none; }
+        html.light-mode .icon-light { display: inline-block; }
+    </style>
+
+    {% block extra_styles %}{% endblock %}
+
+    <style>
+        /* ── Overrides de modo claro (después de extra_styles para ganar cascada) ── */
+
+        /* Encabezados */
+        html.light-mode h1,
+        html.light-mode .detalle-titulo,
+        html.light-mode .success-title { color: #111; }
+
+        /* Texto principal hardcodeado */
+        html.light-mode .card-titulo,
+        html.light-mode .hcard-titulo,
+        html.light-mode .item-titulo,
+        html.light-mode .item-subtotal,
+        html.light-mode .prop-value,
+        html.light-mode .orden-item-nombre { color: #222; }
+
+        /* Botones qty */
+        html.light-mode .qty-btn {
+            background: #f5f5f5;
+            border-color: rgba(0,0,0,0.15);
+            color: #333;
+        }
+        html.light-mode .qty-btn:hover { background: #e5e5e5; }
+        html.light-mode .qty-input {
+            background: #fff;
+            border-color: rgba(0,0,0,0.15);
+            color: #111;
+        }
+
+        /* Código de orden */
+        html.light-mode .orden-codigo {
+            background: #f0f0f0;
+            border-color: rgba(0,0,0,0.09);
+            color: rgba(0,0,0,0.5);
+        }
+
+        /* Barra de búsqueda */
+        html.light-mode .search-bar input { color: #111; }
+        html.light-mode .search-bar button {
+            background: rgba(0,0,0,0.06);
+            color: #333;
+        }
+        html.light-mode .search-bar button:hover { background: rgba(0,0,0,0.11); }
+
+        /* Sidebar del catálogo */
+        html.light-mode .sidebar-list a { color: rgba(0,0,0,0.65); }
+        html.light-mode .sidebar-list a.active { background: rgba(0,0,0,0.08); color: #111; }
+        html.light-mode .sidebar-list a.all-link { color: rgba(0,0,0,0.45); }
+
+        /* Botones de acción principal */
+        html.light-mode .btn-comprar,
+        html.light-mode .btn-ticket,
+        html.light-mode .btn-submit,
+        html.light-mode .vacio a,
+        html.light-mode .sin-compras a,
+        html.light-mode .carrito-vacio a { background: #111; color: #fff; }
+
+        html.light-mode .btn-comprar:hover,
+        html.light-mode .btn-ticket:hover,
+        html.light-mode .btn-submit:hover,
+        html.light-mode .vacio a:hover,
+        html.light-mode .sin-compras a:hover,
+        html.light-mode .carrito-vacio a:hover { background: #333; }
+
+        /* Campos de formulario */
+        html.light-mode .field input,
+        html.light-mode .field select,
+        html.light-mode .field textarea {
+            background: #fff;
+            border-color: rgba(0,0,0,0.15);
+            color: #111;
+        }
+        html.light-mode .field input:focus,
+        html.light-mode .field select:focus,
+        html.light-mode .field textarea:focus { border-color: rgba(0,0,0,0.4); }
+
+        /* Estados de error */
+        html.light-mode .errors {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #dc2626;
+        }
+
+        /* Aviso en login */
+        html.light-mode .aviso {
+            background: #fffbeb;
+            border-color: #fbbf24;
+            color: #92400e;
+        }
+
+        /* Link alternativo en auth */
+        html.light-mode .alt-link { color: rgba(0,0,0,0.55); }
+        html.light-mode .alt-link a { color: rgba(0,0,0,0.75); }
+
+        /* Cabecera de orden en mis_compras */
+        html.light-mode .orden-header { background: rgba(0,0,0,0.02); }
+
+        /* Breadcrumb */
+        html.light-mode .breadcrumb a { color: rgba(0,0,0,0.5); }
+        html.light-mode .breadcrumb a:hover { color: #111; }
+
+        /* Botones seguir / cancelar */
+        html.light-mode .btn-seguir { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); color: #333; }
+        html.light-mode .btn-seguir:hover { background: rgba(0,0,0,0.08); }
+        html.light-mode .btn-volver { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); color: #333; }
+        html.light-mode .btn-volver:hover { background: rgba(0,0,0,0.08); }
+
+        /* Badge de historial activo/inactivo */
+        html.light-mode .btn-toggle-on  { background: rgba(22,163,74,0.15); color: #16a34a; }
+        html.light-mode .btn-toggle-off { background: rgba(220,38,38,0.12); color: #dc2626; }
+        html.light-mode .btn-borrar     { background: rgba(0,0,0,0.05); color: #555; }
+
+        /* Historial desactivado */
+        html.light-mode .historial-apagado { background: #f5f5f5; }
+    </style>
+</head>
+<body>
+
+{% block header %}
+<header>
+    <img src="{% static 'productos/img/logo.png' %}" alt="Borderline logo" class="header-logo-img">
+    <a href="{% url 'home' %}" class="header-brand">
+        <span class="header-brand-name">Borderline</span>
+        <span class="header-brand-sub">3D Store</span>
+    </a>
+
+    <a href="{% url 'pokedex' %}" class="btn-pokedex">🔴 Pokédex</a>
+
+    <a href="{% url 'ver_carrito' %}" class="header-cart">
+        🛒 Carrito
+        {% if cart_count > 0 %}
+        <span class="header-cart-badge">{{ cart_count }}</span>
+        {% endif %}
+    </a>
+
+    <div class="header-auth">
+        {% if user.is_authenticated %}
+        <div class="header-user-menu">
+            <details>
+                <summary>
+                    👤 {{ user.username }}
+                    <span class="dropdown-chevron">▼</span>
+                </summary>
+                <div class="dropdown-menu">
+                    <a href="{% url 'mis_compras' %}">📦 Mis compras</a>
+                    <a href="{% url 'historial' %}">🕐 Historial</a>
+                    {% if user.is_staff %}
+                    <a href="{% url 'staff_panel' %}">⚙ Panel Staff</a>
+                    {% endif %}
+                    <div class="separator"></div>
+                    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Cerrar sesión</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn-login">Iniciar sesión</a>
+            <a href="{% url 'registro' %}" class="btn-registro">Registrarse</a>
+        {% endif %}
+    </div>
+</header>
+{% endblock header %}
+
+{% block content %}{% endblock %}
+
+{% block scripts %}{% endblock %}
+
+<button class="btn-theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+    <span class="icon-dark">☀️</span>
+    <span class="icon-light">🌙</span>
+</button>
+
+<script>
+document.getElementById('theme-toggle').addEventListener('click', function() {
+    var light = document.documentElement.classList.toggle('light-mode');
+    localStorage.setItem('theme', light ? 'light' : 'dark');
+});
+</script>
+
+</body>
+</html>

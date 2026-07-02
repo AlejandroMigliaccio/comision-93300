@@ -1,255 +1,147 @@
+{% extends 'productos/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="{% static 'productos/img/logo.png' %}">
-    <title>Mis compras — Borderline 3D</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
 
-        header {
-            background-color: #f5f5f5;
-            border-bottom: 1px solid #ddd;
-            padding: 12px 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-logo-img { height: 56px; width: 56px; object-fit: contain; }
-        .header-brand { display: flex; flex-direction: column; line-height: 1; text-decoration: none; }
-        .header-brand-name { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: #111; }
-        .header-brand-sub { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: #666; margin-top: 3px; }
+{% block title %}Mis compras — Borderline 3D{% endblock %}
 
-        .header-cart {
-            margin-left: auto;
-            display: flex; align-items: center; gap: 8px;
-            text-decoration: none; color: #111; font-size: 14px; font-weight: bold;
-            background: #f0f0f0; border-radius: 8px; padding: 8px 16px; transition: background 0.2s;
-        }
-        .header-cart:hover { background: #e0e0e0; }
-        .header-cart-badge {
-            background: #16a34a; color: #fff; border-radius: 50%;
-            width: 22px; height: 22px; display: flex; align-items: center;
-            justify-content: center; font-size: 12px; font-weight: bold;
-        }
+{% block extra_styles %}
+<style>
+    .main-content { max-width: 860px; margin: 40px auto; padding: 0 16px 60px; }
 
-        /* ── Dropdown usuario ── */
-        .header-user-menu { position: relative; }
+    h1 {
+        font-family: 'Cinzel', serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 32px;
+        letter-spacing: 2px;
+    }
 
-        .header-user-menu details { position: relative; }
+    .sin-compras { text-align: center; padding: 80px 0; color: var(--text-muted); font-size: 16px; }
 
-        .header-user-menu summary {
-            list-style: none;
-            display: flex; align-items: center; gap: 6px;
-            padding: 8px 14px; border-radius: 8px;
-            background: #e0e7ff; color: #3730a3;
-            font-size: 13px; font-weight: bold;
-            cursor: pointer; user-select: none;
-            transition: background 0.2s;
-        }
-        .header-user-menu summary::-webkit-details-marker { display: none; }
-        .header-user-menu summary:hover { background: #c7d2fe; }
+    .sin-compras a {
+        display: inline-block;
+        margin-top: 20px;
+        background: rgba(255,255,255,0.9);
+        color: #111;
+        padding: 12px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+    .sin-compras a:hover { background: #fff; }
 
-        .dropdown-chevron { font-size: 10px; transition: transform 0.2s; }
-        details[open] .dropdown-chevron { transform: rotate(180deg); }
+    .orden-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
 
-        .dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 8px);
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            min-width: 180px;
-            z-index: 200;
-            overflow: hidden;
-        }
+    .orden-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
+    }
 
-        .dropdown-menu a,
-        .dropdown-menu button {
-            display: block; width: 100%;
-            padding: 12px 16px;
-            text-align: left;
-            font-size: 14px;
-            text-decoration: none;
-            color: #333;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .dropdown-menu a:hover,
-        .dropdown-menu button:hover { background: #f5f5f5; }
-        .dropdown-menu .separator { height: 1px; background: #f0f0f0; margin: 4px 0; }
-        .dropdown-menu .logout-btn { color: #dc2626; }
+    .orden-meta { display: flex; flex-direction: column; gap: 4px; }
 
-        /* ── Contenido ── */
-        .main-content { max-width: 860px; margin: 40px auto; padding: 0 16px 60px; }
+    .orden-codigo { font-family: monospace; font-size: 13px; color: var(--text-muted); letter-spacing: 1px; }
+    .orden-codigo span { color: rgba(255,255,255,0.25); }
 
-        h1 {
-            font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700;
-            color: #111; margin-bottom: 32px;
-        }
+    .orden-fecha { font-size: 13px; color: var(--text-muted); }
+    .orden-total { font-size: 22px; font-weight: bold; color: var(--green); }
 
-        .sin-compras {
-            text-align: center; padding: 80px 0; color: #888; font-size: 16px;
-        }
-        .sin-compras a {
-            display: inline-block; margin-top: 20px; background: #111; color: #fff;
-            padding: 12px 28px; border-radius: 8px; text-decoration: none;
-            font-weight: bold; font-size: 14px;
-        }
-        .sin-compras a:hover { background: #333; }
+    .orden-items { padding: 0 24px; }
 
-        /* ── Tarjeta de orden ── */
-        .orden-card {
-            background: #fff; border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 24px; overflow: hidden;
-        }
+    .orden-item {
+        display: grid;
+        grid-template-columns: 64px 1fr auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .orden-item:last-child { border-bottom: none; }
 
-        .orden-header {
-            display: flex; flex-wrap: wrap;
-            justify-content: space-between; align-items: center;
-            gap: 12px;
-            padding: 18px 24px;
-            border-bottom: 1px solid #f0f0f0;
-            background: #fafafa;
-        }
+    .item-img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: var(--surface-2);
+        padding: 6px;
+    }
 
-        .orden-meta { display: flex; flex-direction: column; gap: 4px; }
+    .item-img-placeholder {
+        width: 64px;
+        height: 64px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: var(--text-muted);
+    }
 
-        .orden-codigo {
-            font-family: monospace; font-size: 13px;
-            color: #555; letter-spacing: 1px;
-        }
-        .orden-codigo span { color: #999; }
+    .item-info { display: flex; flex-direction: column; gap: 4px; }
+    .item-titulo { font-size: 15px; font-weight: bold; color: #f0f0f0; }
+    .item-sku { font-size: 12px; color: var(--text-muted); }
+    .item-detalle { font-size: 13px; color: var(--text-muted); }
+    .item-subtotal { font-size: 15px; font-weight: bold; color: #f0f0f0; text-align: right; }
+</style>
+{% endblock %}
 
-        .orden-fecha { font-size: 13px; color: #888; }
+{% block content %}
+<div class="main-content">
+    <h1>Mis compras</h1>
 
-        .orden-total {
-            font-size: 22px; font-weight: bold; color: #16a34a;
-        }
-
-        /* ── Items ── */
-        .orden-items { padding: 0 24px; }
-
-        .orden-item {
-            display: grid;
-            grid-template-columns: 64px 1fr auto;
-            align-items: center;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        .orden-item:last-child { border-bottom: none; }
-
-        .item-img {
-            width: 64px; height: 64px; object-fit: contain;
-            border-radius: 8px; background: #f9f9f9; padding: 6px;
-        }
-        .item-img-placeholder {
-            width: 64px; height: 64px; background: #f0f0f0;
-            border-radius: 8px; display: flex; align-items: center;
-            justify-content: center; font-size: 11px; color: #aaa;
-        }
-
-        .item-info { display: flex; flex-direction: column; gap: 4px; }
-        .item-titulo { font-size: 15px; font-weight: bold; color: #222; }
-        .item-sku { font-size: 12px; color: #aaa; }
-        .item-detalle { font-size: 13px; color: #888; }
-
-        .item-subtotal { font-size: 15px; font-weight: bold; color: #333; text-align: right; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <img src="{% static 'productos/img/logo.png' %}" alt="Borderline logo" class="header-logo-img">
-        <a href="{% url 'home' %}" class="header-brand">
-            <span class="header-brand-name">Borderline</span>
-            <span class="header-brand-sub">3D Store</span>
-        </a>
-
-        <a href="{% url 'ver_carrito' %}" class="header-cart">
-            🛒 Carrito
-            {% if cart_count > 0 %}
-            <span class="header-cart-badge">{{ cart_count }}</span>
-            {% endif %}
-        </a>
-
-        <div class="header-user-menu">
-            <details>
-                <summary>
-                    👤 {{ user.username }}
-                    <span class="dropdown-chevron">▼</span>
-                </summary>
-                <div class="dropdown-menu">
-                    <a href="{% url 'mis_compras' %}">📦 Mis compras</a>
-                        <a href="{% url 'historial' %}">🕐 Historial</a>
-                    <div class="separator"></div>
-                    <form method="post" action="{% url 'logout' %}" style="margin:0;">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-btn">Cerrar sesión</button>
-                    </form>
+    {% if ordenes %}
+        {% for orden in ordenes %}
+        <div class="orden-card">
+            <div class="orden-header">
+                <div class="orden-meta">
+                    <span class="orden-codigo"><span>#</span> {{ orden.codigo }}</span>
+                    <span class="orden-fecha">{{ orden.fecha|date:"d \d\e F \d\e Y, H:i" }}</span>
                 </div>
-            </details>
+                <span class="orden-total">${{ orden.total }}</span>
+            </div>
+
+            <div class="orden-items">
+                {% for item in orden.items.all %}
+                <div class="orden-item">
+                    {% if item.producto.foto %}
+                        <img src="{{ item.producto.foto }}" alt="{{ item.producto.titulo }}" class="item-img">
+                    {% else %}
+                        <div class="item-img-placeholder">Sin imagen</div>
+                    {% endif %}
+
+                    <div class="item-info">
+                        <span class="item-titulo">{{ item.producto.titulo }}</span>
+                        <span class="item-sku">SKU: {{ item.producto.sku }}</span>
+                        <span class="item-detalle">{{ item.cantidad }} × ${{ item.precio_unitario }}</span>
+                    </div>
+
+                    <span class="item-subtotal">${{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    </header>
-
-    <div class="main-content">
-        <h1>Mis compras</h1>
-
-        {% if ordenes %}
-            {% for orden in ordenes %}
-            <div class="orden-card">
-                <div class="orden-header">
-                    <div class="orden-meta">
-                        <span class="orden-codigo"><span>#</span> {{ orden.codigo }}</span>
-                        <span class="orden-fecha">{{ orden.fecha|date:"d \d\e F \d\e Y, H:i" }}</span>
-                    </div>
-                    <span class="orden-total">${{ orden.total }}</span>
-                </div>
-
-                <div class="orden-items">
-                    {% for item in orden.items.all %}
-                    <div class="orden-item">
-                        {% if item.producto.foto %}
-                            <img src="{{ item.producto.foto }}" alt="{{ item.producto.titulo }}" class="item-img">
-                        {% else %}
-                            <div class="item-img-placeholder">Sin imagen</div>
-                        {% endif %}
-
-                        <div class="item-info">
-                            <span class="item-titulo">{{ item.producto.titulo }}</span>
-                            <span class="item-sku">SKU: {{ item.producto.sku }}</span>
-                            <span class="item-detalle">
-                                {{ item.cantidad }} × ${{ item.precio_unitario }}
-                            </span>
-                        </div>
-
-                        <span class="item-subtotal">${{ item.subtotal }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="sin-compras">
-                <p>Todavía no realizaste ninguna compra.</p>
-                <a href="{% url 'home' %}">Ver productos</a>
-            </div>
-        {% endif %}
-    </div>
-
-</body>
-</html>
+        {% endfor %}
+    {% else %}
+        <div class="sin-compras">
+            <p>Todavía no realizaste ninguna compra.</p>
+            <a href="{% url 'home' %}">Ver productos</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
